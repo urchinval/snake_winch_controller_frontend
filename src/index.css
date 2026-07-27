@@ -3,6 +3,7 @@
   --panel: #14181d;
   --border: #262b31;
   --text: #e8eaed;
+  --text-muted: #8a93a0;
 
   --accent-green: #3ddc84;
   --accent-green-dim: #1e5c3b;
@@ -22,7 +23,9 @@
   padding: 0;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -41,13 +44,4 @@ button {
 button:focus-visible {
   outline: 2px solid var(--ok);
   outline-offset: 2px;
-}
-
-.screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
 }
