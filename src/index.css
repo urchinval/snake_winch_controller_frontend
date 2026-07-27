@@ -1,0 +1,53 @@
+:root {
+  --bg: #0b0e11;
+  --panel: #14181d;
+  --border: #262b31;
+  --text: #e8eaed;
+
+  --accent-green: #3ddc84;
+  --accent-green-dim: #1e5c3b;
+  --accent-orange: #ffb020;
+  --accent-orange-dim: #6b4a0f;
+  --accent-red: #ff4d4f;
+  --accent-red-dim: #6b1f20;
+  --ok: #3da5ff;
+
+  --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--ok);
+  outline-offset: 2px;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
