@@ -1,7 +1,7 @@
-import { BASE_URL, API_PREFIX } from './common/constants';
-import type { PathType } from './common/types';
+import { BASE_URL, API_PREFIX } from '../common/api/constants';
+import type { PathType } from '../common/api/types';
 
-class ApiError extends Error {
+export class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
     super(message);

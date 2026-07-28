@@ -1,5 +1,5 @@
-import { Path } from './common/constants';
-import type { WinchStateResponse, CommandRequest, ControlResponse } from './common/types';
+import { Path } from '../common/api/constants';
+import type { WinchStateResponse, CommandRequest, ControlResponse } from '../common/api/types';
 import { apiRequest } from './client';
 
 export function fetchWinchState(): Promise<WinchStateResponse> {

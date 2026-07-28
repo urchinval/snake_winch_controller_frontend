@@ -5,6 +5,7 @@ export default function HoldButton({
   label,
   direction,
   activeDirection,
+  isBlocked = false,
   onStart,
   onEnd,
 }: HoldButtonProps) {
@@ -23,7 +24,7 @@ export default function HoldButton({
 
   return (
     <button
-      className={`${s.btn} ${activeClass}`}
+      className={`${s.btn} ${activeClass} ${isBlocked ? s.blocked : ''}`}
       onPointerDown={handlePointerDown}
       onPointerUp={onEnd}
       onPointerLeave={onEnd}

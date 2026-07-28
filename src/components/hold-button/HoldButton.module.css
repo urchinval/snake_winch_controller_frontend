@@ -24,3 +24,11 @@
   border-color: var(--accent-red);
   color: var(--accent-red);
 }
+
+.btn.blocked {
+  background-color: var(--bg);
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
