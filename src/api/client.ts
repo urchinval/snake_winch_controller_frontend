@@ -34,6 +34,7 @@ export async function apiRequest<T>(path: PathType, options: RequestInit = {}): 
     } catch (error) {
       console.error('Error parsing API response', error);
     }
+    throw new ApiError(message, response.status);
   }
 
   return response.json() as Promise<T>;

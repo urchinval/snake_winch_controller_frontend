@@ -20,9 +20,9 @@
 }
 
 .btn.activeReverse {
-  background: var(--accent-red-dim);
-  border-color: var(--accent-red);
-  color: var(--accent-red);
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
 }
 
 .btn.blocked {

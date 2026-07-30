@@ -4,7 +4,7 @@ export type PathType = (typeof Path)[keyof typeof Path];
 
 export type WinchState = 'FORWARD' | 'REVERSE' | 'STOPPED';
 
-export type WinchStopReason = 'none' | 'manual' | 'watchdog' | 'maxRuntime';
+export type WinchStopReason = 'watchdog' | 'maxRunTime' | 'manual' | 'none';
 
 export type WinchStateResponse = {
   state: WinchState;
@@ -14,7 +14,7 @@ export type WinchStateResponse = {
   runTimeMs: number;
   uptimeMs: number;
   isConnected: boolean;
-  stopReason?: WinchStopReason;
+  stopReason: WinchStopReason;
 };
 
 export type HealthResponse = {

@@ -36,6 +36,13 @@
   background-color: var(--accent-red);
 }
 
+.error {
+  padding: 4px 12px;
+  color: var(--accent-red-dim);
+  border: 1px solid var(--accent-red-dim);
+  border-radius: 8px;
+}
+
 .controls {
   display: flex;
   flex-direction: column;
