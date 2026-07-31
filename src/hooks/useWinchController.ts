@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { controlWinch, fetchWinchState } from '../api/winch';
-import { ApiError } from '../api';
+import { ApiError, fetchWinchState, controlWinch } from '../api';
 import type { CommandRequest, WinchState } from '../common/api/types';
-import type { ConnectionStatus, ActiveDirection } from '../common/shared/types';
+import type { ConnectionStatus, ActiveDirection, Direction } from '../common/shared/types';
 import { HEARTBEAT_INTERVAL_MS, STATE_POLL_INTERVAL_MS } from '../common/shared/constants';
 
 export function useWinchControl() {
@@ -12,6 +11,10 @@ export function useWinchControl() {
   const [activeDirection, setActiveDirection] = useState<ActiveDirection>(null);
 
   const heartbeatRef = useRef<number | null>(null);
+  // Черга команд щоб запити йшли в заначеному порядку і не перезаписувалися
+  const commandQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const commandInFlightRef = useRef(false);
+  const isHeldRef = useRef(false);
 
   const stopHeartbeat = useCallback(() => {
     if (heartbeatRef.current !== null) {
@@ -20,10 +23,6 @@ export function useWinchControl() {
     }
   }, []);
 
-  // Єдине місце, де стан із сервера (від опитування чи від відповіді на
-  // команду) застосовується до UI. Фікс Бага 2: якщо плата вже реально
-  // STOPPED, а фронт все ще думає, що кнопка тримається (heartbeat живий) -
-  // знімаємо підсвітку й heartbeat тут же, а не чекаємо явного відпускання.
   const applyState = useCallback(
     (newState: WinchState) => {
       setState(newState);
@@ -33,6 +32,7 @@ export function useWinchControl() {
       if (newState === 'STOPPED' && heartbeatRef.current !== null) {
         stopHeartbeat();
         setActiveDirection(null);
+        isHeldRef.current = false;
       }
     },
     [stopHeartbeat]
@@ -54,6 +54,7 @@ export function useWinchControl() {
 
   useEffect(() => {
     const tick = () => {
+      if (isHeldRef.current) return;
       void refreshState();
     };
 
@@ -66,32 +67,43 @@ export function useWinchControl() {
     };
   }, [refreshState]);
 
-  // Прибираємо heartbeat, якщо компонент, що використовує хук, розмонтується
-  // під час утримання кнопки - інакше команди й далі летіли б у фоні.
   useEffect(() => stopHeartbeat, [stopHeartbeat]);
 
+  // Ставить команду в чергу замість того, щоб пускати fetch одразу тобто
+  // наступна команда ніколи не полетить, поки не прийде відповідь на
+  // попередню, і ESP32 отримує їх у тому ж порядку, що й UI.
   const sendCommand = useCallback(
-    async (command: CommandRequest['command']) => {
-      try {
-        const response = await controlWinch(command);
-        applyState(response.state);
-      } catch (err) {
-        applyFailure(err);
-      }
+    (command: CommandRequest['command']) => {
+      const run = async () => {
+        commandInFlightRef.current = true;
+        try {
+          const response = await controlWinch(command);
+          applyState(response.state);
+        } catch (err) {
+          applyFailure(err);
+        } finally {
+          commandInFlightRef.current = false;
+        }
+      };
+
+      commandQueueRef.current = commandQueueRef.current.then(run);
+      return commandQueueRef.current;
     },
     [applyState, applyFailure]
   );
 
   const handleStartHold = useCallback(
-    (command: CommandRequest['command']) => {
-      setActiveDirection(command === 'forward' ? 'forward' : 'reverse');
+    (direction: Direction) => {
+      setActiveDirection(direction);
+      isHeldRef.current = true;
 
       stopHeartbeat(); // про всяк випадок, якщо попередній ще не встиг прибратись
 
-      void sendCommand(command); // одразу, не чекаючи першого тіку
+      void sendCommand(direction);
 
       heartbeatRef.current = window.setInterval(() => {
-        void sendCommand(command);
+        if (commandInFlightRef.current) return;
+        void sendCommand(direction);
       }, HEARTBEAT_INTERVAL_MS);
     },
     [sendCommand, stopHeartbeat]
@@ -99,12 +111,14 @@ export function useWinchControl() {
 
   const handleEndHold = useCallback(() => {
     setActiveDirection(null);
+    isHeldRef.current = false;
     stopHeartbeat();
     void sendCommand('stop');
   }, [sendCommand, stopHeartbeat]);
 
   const handleStopClick = useCallback(() => {
     setActiveDirection(null);
+    isHeldRef.current = false;
     stopHeartbeat();
     void sendCommand('stop');
   }, [sendCommand, stopHeartbeat]);

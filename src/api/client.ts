@@ -1,5 +1,6 @@
 import { BASE_URL, API_PREFIX } from '../common/api/constants';
 import type { PathType } from '../common/api/types';
+import { REQUEST_TIMEOUT_MS } from '../common/shared/constants';
 
 export class ApiError extends Error {
   status: number;
@@ -14,6 +15,12 @@ export async function apiRequest<T>(path: PathType, options: RequestInit = {}): 
   const headers: HeadersInit = options.body ? { 'Content-Type': 'application/json' } : {};
   let response: Response;
 
+  // Без таймауту завислий fetch (наприклад, через слабкий WiFi) заблокував
+  // би чергу команд у useWinchController назавжди - включно з "stop" на
+  // відпускання кнопки.
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
   try {
     response = await fetch(url, {
       ...options,
@@ -21,9 +28,15 @@ export async function apiRequest<T>(path: PathType, options: RequestInit = {}): 
         ...headers,
         ...options.headers,
       },
+      signal: controller.signal,
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiError('Controller request timed out', 0);
+    }
     throw new ApiError('No connection to controller', 0);
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 
   if (!response.ok) {

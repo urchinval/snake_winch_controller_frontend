@@ -1,3 +1,3 @@
 export const STATE_POLL_INTERVAL_MS = 1000;
 export const HEARTBEAT_INTERVAL_MS = 800;
-export const TOAST_DEFAULT_DURATION_MS = 5000;
+export const REQUEST_TIMEOUT_MS = 1200;
