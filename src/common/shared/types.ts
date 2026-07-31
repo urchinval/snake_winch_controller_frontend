@@ -1,9 +1,15 @@
-import type { WinchStateResponse } from '../api/types';
+export type AutostopReason = 'maxRuntime' | 'unknown';
 
-export type AutostopReason = 'watchdog' | 'maxRunTime' | 'unknown';
+export type ToastVariant = 'error' | 'warning' | 'info';
 
-export type WinchSnapshot = {
-  state: WinchStateResponse['state'];
-  lastCommandAgeMs: number;
-  runTimeMs: number;
+export type ToastItem = {
+  id: string;
+  message: string;
+  variant: ToastVariant;
 };
+
+export type Direction = 'forward' | 'reverse';
+
+export type ActiveDirection = Direction | null;
+
+export type ConnectionStatus = 'checking' | 'online' | 'offline';

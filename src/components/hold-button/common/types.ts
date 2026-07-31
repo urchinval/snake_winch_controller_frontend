@@ -1,11 +1,10 @@
 import type { ComponentPropsWithoutRef } from 'react';
-
-type Direction = 'forward' | 'reverse';
+import type { Direction, ActiveDirection } from '../../../common/shared/types';
 
 export type HoldButtonProps = ComponentPropsWithoutRef<'button'> & {
   label: string;
   direction: Direction;
-  activeDirection: Direction | null;
+  activeDirection: ActiveDirection;
   isBlocked?: boolean;
   onStart: () => void;
   onEnd: () => void;
