@@ -4,28 +4,22 @@ export type PathType = (typeof Path)[keyof typeof Path];
 
 export type WinchState = 'FORWARD' | 'REVERSE' | 'STOPPED';
 
-export type WinchStopReason = 'watchdog' | 'maxRunTime' | 'manual' | 'none';
+export type WinchStopReason = 'maxRuntime' | 'manual' | 'none';
 
 export type WinchStateResponse = {
   state: WinchState;
   lastCommandAgeMs: number;
   watchdogTimeoutMs: number;
-  maxRunTimeMs: number;
+  maxRuntimeMs: number;
   runTimeMs: number;
   uptimeMs: number;
   isConnected: boolean;
   stopReason: WinchStopReason;
 };
 
-export type HealthResponse = {
-  status: string;
-  uptimeMs: number;
-  wifi: boolean;
-  ip: string;
-};
-
 export type ControlResponse = {
   state: WinchState;
+  stopReason: WinchStopReason;
 };
 
 export type CommandRequest = {
