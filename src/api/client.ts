@@ -15,9 +15,6 @@ export async function apiRequest<T>(path: PathType, options: RequestInit = {}): 
   const headers: HeadersInit = options.body ? { 'Content-Type': 'application/json' } : {};
   let response: Response;
 
-  // Без таймауту завислий fetch (наприклад, через слабкий WiFi) заблокував
-  // би чергу команд у useWinchController назавжди - включно з "stop" на
-  // відпускання кнопки.
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
