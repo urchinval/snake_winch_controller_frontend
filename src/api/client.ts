@@ -1,4 +1,4 @@
-import { BASE_URL, API_PREFIX } from '../common/api/constants';
+import { BASE_URL } from '../common/api/constants';
 import type { PathType } from '../common/api/types';
 import { REQUEST_TIMEOUT_MS } from '../common/shared/constants';
 
@@ -11,7 +11,7 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest<T>(path: PathType, options: RequestInit = {}): Promise<T> {
-  const url = `${BASE_URL}${API_PREFIX}${path}`;
+  const url = `${BASE_URL}${path}`;
   const headers: HeadersInit = options.body ? { 'Content-Type': 'application/json' } : {};
   let response: Response;
 

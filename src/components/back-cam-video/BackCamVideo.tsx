@@ -1,8 +1,8 @@
-import { MEDIAMTX_WEBRTC_PORT, CAMERA_PATH } from './common/types';
+import { CAMERA_PATH } from '../../common/api/constants';
 import s from './BackCamVideo.module.css';
 
 export default function BackCamVideo() {
-  const src = `http://${window.location.hostname}:${MEDIAMTX_WEBRTC_PORT}/${CAMERA_PATH}`;
+  const src = `${window.location.origin}${CAMERA_PATH}`;
 
   return (
     <div className={s.wrapper}>
