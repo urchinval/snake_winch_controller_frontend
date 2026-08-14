@@ -22,10 +22,10 @@ through nginx on the Pi, same-origin. This matters for two reasons:
 - The camera stream's auth header (`Authorization: Basic ...`) is injected
   by nginx server-side, the browser never sees or needs credentials.
 
-Because of this, **all API/stream paths in the code are relative**
+**All API/stream paths in the code are relative**
 (`BASE_URL = '/api/v1'` in `src/common/api/constants.ts`,
-`CAMERA_PATH = '/stream/winch_cam/'` in
-`src/components/back-cam-video/common/constants.ts`, resolved against
+`CAMERA_PATH = '/winch_cam/'` in
+`src/common/api/constants.ts`, resolved against
 `window.location.origin`). None of it needs to change if the ESP32's IP or
 subnet changes — only nginx's `proxy_pass` target does.
 
@@ -50,7 +50,7 @@ npm run dev
 ```
 
 `vite dev` serves on its own port with no nginx in front of it, so
-`/api/v1/*` and `/stream/winch_cam/*` requests won't resolve to anything
+`/api/v1/*` and `/winch_cam/*` requests won't resolve to anything
 unless you're also running against a live Pi. Point Vite's dev proxy at the
 Pi's WireGuard IP if you need to iterate against real hardware:
 
@@ -60,7 +60,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/v1': 'http://192.168.112.2',
-      '/stream/winch_cam': { target: 'http://192.168.112.2', ws: true },
+      '/winch_cam': { target: 'http://192.168.112.2', ws: true },
     },
   },
 });
@@ -88,4 +88,4 @@ current IP).
 - The maintenance AP / `POST /api/v1/wifi/config` flow on the ESP32 (see the
   firmware repo) is not exposed anywhere in this UI by design — it's a
   field-recovery path meant to be used directly against the ESP32's own AP
-  (`SNAKE-Winch-Setup`), not through the normal operator flow.
+  (`SNAKE-Winch-Setup`) **when and if it is done**, not through the normal operator flow.
